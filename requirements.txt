@@ -1,0 +1,15 @@
+# Arena Survival - Python Dependencies
+
+# Pygame - herní engine pro 2D hry
+# https://www.pygame.org/
+pygame>=2.0.0
+
+# Nepovinné závislosti pro vývoj a testování:
+# Odkomentujte podle potřeby
+
+# pytest>=7.0.0              # Testing framework
+# pytest-cov>=4.0.0          # Code coverage pro pytest
+# black>=22.0.0              # Code formatter
+# flake8>=5.0.0              # Linter
+# mypy>=0.990                # Static type checker
+# pylint>=2.15.0             # Code quality checker

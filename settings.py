@@ -1,0 +1,21 @@
+"""
+Konfigurační soubor hry Arena Survival.
+
+Obsahuje všechny globální konstanty a herní parametry.
+"""
+
+# Rozměry herního okna v pixelech
+WIDTH = 800
+HEIGHT = 600
+
+# Počet snímků za sekundu (FPS)
+FPS = 60
+
+# Rychlosti pohybu entit v pixelech za sekundu
+PLAYER_SPEED = 250   # Rychlost pohybu hráče
+ENEMY_SPEED = 100    # Rychlost pohybu nepřátel
+BULLET_SPEED = 400   # Rychlost projektilů
+
+# Herní parametry
+BULLET_LIFETIME = 1.5   # Doba života projektilu v sekundách
+SPAWN_INTERVAL = 2.0    # Interval pro spawn nepřátel v sekundách
