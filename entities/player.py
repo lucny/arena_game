@@ -57,10 +57,10 @@ class Player(Entity):
 
         # Normalizace rychlosti, aby diagonální pohyb nebyl rychlejší
         if vel.length() > 0:
-            vel = vel.normalize() * PLAYER_SPEED
+            vel = vel.normalize()
 
         # Aplikace rychlosti na pozici
-        self.pos += vel * dt
+        self.pos += vel * dt * PLAYER_SPEED
         
         # Omezení pohybu uvnitř herní plochy
         half_width = self.rect.width / 2
