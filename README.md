@@ -583,13 +583,13 @@ main.py          → Vstupní bod
 
 Po prostudování tohoto projektu byste měli rozumět:
 
-1. **OOP principům** - dědičnost, zapouzdření, polymorfismus
-2. **Herní smyčce** - input → update → render
-3. **Sprite systému** - správa herních objektů
-4. **Vektorové matematice** - směry, normalizace, vzdálenosti
-5. **Kolizím** - detekce a zpracování
-6. **Delta time** - framerate nezávislý pohyb
-7. **Struktuře projektu** - separace concerns
+1. **OOP principům** - dědičnost, zapouzdření, polymorfismus - [Principy OOP v Pythonu](docs/oop-principy.md)
+2. **Herní smyčce** - input → update → render - [Herní smyčka v Pygame](docs/game-loop-events.md)
+3. **Sprite systému** - správa herních objektů - [Surface a Sprite](docs/surface-sprite.md)
+4. **Vektorové matematice** - směry, normalizace, vzdálenosti - [Vektorová matematika v Pygame](docs/vektorova-matematika.md)
+5. **Kolizím** - detekce a zpracování - [Kolize v 2D hrách](docs/kolize.md)
+6. **Delta time** - framerate nezávislý pohyb - [Delta time v Pygame](docs/delta-time.md)
+7. **Struktuře projektu** - separace concerns - [Struktura projektu v Pygame](docs/struktura-projektu.md)
 
 ---
 
@@ -599,14 +599,16 @@ Projekt lze rozšířit o:
 
 - 🎵 **Zvuky** - střelba, exploze, hudba
 - 🖼️ **Grafiku** - sprite sheety místo barevných čtverců
+- 🎨 **Animace** - pohybující se sprite sheety
 - 💥 **Částicové efekty** - exploze při zásahu
-- 🏆 **High score** - ukládání nejlepšího skóre
 - ⚡ **Power-upy** - zrychlení, více životů
 - 🎯 **Různé typy nepřátel** - rychlí, pomalí, tanky
 - 🛡️ **Životy hráče** - více pokusů před game over
 - 📊 **Obtížnost** - postupné zrychlování spawnu
+- 🏆 **High score** - ukládání nejlepšího skóre
 - 🌈 **Menu** - start screen, pause, game over
-- 🎨 **Animace** - pohybující se sprite sheety
+
+Odkaz: [Pokročilá vylepšení hry](docs/vylepseni.md)
 
 ---
 
