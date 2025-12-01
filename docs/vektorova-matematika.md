@@ -4,7 +4,7 @@
 
 ## 1. Co je vektor?
 
-📌 **Vektor = “šípka”, která má:**
+📌 **Vektor = “šipka”, která má:**
 
 * **směr** (kam ukazuje)
 * **velikost** (jak je dlouhý)

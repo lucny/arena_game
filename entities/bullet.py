@@ -52,4 +52,5 @@ class Bullet(Entity):
         # Odpočet životnosti
         self.timer += dt
         if self.timer >= BULLET_LIFETIME:
+            
             self.kill()  # Odstranění ze všech sprite skupin

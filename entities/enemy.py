@@ -41,7 +41,7 @@ class Enemy(Entity):
         
         # Normalizace směru (jednotkový vektor)
         if direction.length() > 0:
-            direction = direction.normalize()
+           direction = direction.normalize()
 
         # Pohyb směrem k hráči
         self.pos += direction * ENEMY_SPEED * dt

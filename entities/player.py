@@ -29,6 +29,8 @@ class Player(Entity):
         """
         # Modrý čtverec 40x40 pixelů
         super().__init__(game, pos, (40, 40), (50, 200, 255))
+        self.image = pygame.image.load("assets/robot.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (40, 40))
 
     def update(self, dt):
         """
@@ -44,6 +46,7 @@ class Player(Entity):
         """
         # Získání stavu klávesnice
         keys = pygame.key.get_pressed()
+        # Inicializace rychlosti na nulu
         vel = pygame.Vector2(0, 0)
 
         # Vstup pohybu (WASD)
