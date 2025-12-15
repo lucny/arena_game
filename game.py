@@ -8,6 +8,9 @@ import pygame
 from settings import WIDTH, HEIGHT, FPS
 from entities.player import Player
 from systems.spawner import Spawner
+from ui.menu import Menu
+from ui.settings_menu import SettingsMenu
+from ui.score_menu import ScoreMenu
 
 class Game:
     """
@@ -31,6 +34,12 @@ class Game:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Arena Survival – OOP Version")
         self.clock = pygame.time.Clock()
+        
+        # Herní menu
+        self.state = "menu"
+        self.menu = Menu(self)
+        self.settings_menu = SettingsMenu(self)
+        self.score_menu = ScoreMenu(self)
 
         # Sprite skupiny pro správu kolizí a vykreslování
         self.all_sprites = pygame.sprite.Group()  # Všechny viditelné objekty
@@ -64,8 +73,22 @@ class Game:
             # Delta time v sekundách - čas od posledního snímku
             dt = self.clock.tick(FPS) / 1000
             self.handle_events()
-            self.update(dt)
-            self.draw()
+            
+            if self.state == "menu":
+                self.menu.draw(self.screen)
+                pygame.display.flip()
+
+            elif self.state == "game":
+                self.update(dt)
+                self.draw()
+                
+            elif self.state == "settings":
+                self.settings_menu.draw(self.screen)
+                pygame.display.flip()
+                
+            elif self.state == "scores":
+                self.score_menu.draw(self.screen)
+                pygame.display.flip()
 
     # ------------------------------------------------------------------
     def handle_events(self):
@@ -81,9 +104,19 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            # Střelba na kliknutí myši
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                self.player.shoot()
+            if self.state == "menu":
+                self.menu.handle_event(event)
+
+            elif self.state == "settings":
+                self.settings_menu.handle_event(event)
+                
+            elif self.state == "scores":
+                self.score_menu.handle_event(event)
+
+            elif self.state == "game":
+                # Střelba na kliknutí myši
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.player.shoot()
 
     # ------------------------------------------------------------------
     def update(self, dt):
@@ -111,7 +144,8 @@ class Game:
 
         # Detekce kolize nepřátel s hráčem (game over)
         if pygame.sprite.spritecollide(self.player, self.enemies, False):
-            self.running = False
+            self.state = "menu"
+            self.reset_game()
 
     # ------------------------------------------------------------------
     def draw(self):
@@ -134,7 +168,7 @@ class Game:
         self.draw_hud()
 
         # Aktualizace obrazovky
-        pygame.display.flip()
+        pygame.display.flip()            
 
     # ------------------------------------------------------------------
     def draw_hud(self):
@@ -152,3 +186,26 @@ class Game:
         self.screen.blit(time, (210, 10))
         self.screen.blit(shoots, (410, 10))
         self.screen.blit(accuracy, (610, 10))
+    
+    # ------------------------------------------------------------------
+    def reset_game(self):
+        """
+        Resetuje hru do počátečního stavu.
+        
+        Vyčistí všechny sprite skupiny a vytvoří nové objekty.
+        """
+        # Vyčištění všech sprite skupin
+        self.all_sprites.empty()
+        self.enemies.empty()
+        self.bullets.empty()
+        
+        # Vytvoření nového hráče
+        self.player = Player(self, (WIDTH // 2, HEIGHT // 2))
+        self.all_sprites.add(self.player)
+        
+        # Reset spawneru
+        self.spawner = Spawner(self)
+        
+        # Reset skóre a statistik
+        self.score = 0
+        self.shoots = 0
