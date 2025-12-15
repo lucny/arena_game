@@ -91,9 +91,11 @@ class Player(Entity):
             direction = direction.normalize()
 
             # Vytvoření a přidání projektilu do hry
-            bullet = Bullet(self.game, self.pos, direction)
-            self.game.shoots += 1
-            self.game.bullets.add(bullet)
-            self.game.all_sprites.add(bullet)
-            self.game.play_sound("shoot")
+            if self.game.shots_left > 0:
+                bullet = Bullet(self.game, self.pos, direction)
+                self.game.shoots += 1
+                self.game.shots_left -= 1
+                self.game.bullets.add(bullet)
+                self.game.all_sprites.add(bullet)
+                self.game.play_sound("shoot")
             

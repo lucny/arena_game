@@ -17,6 +17,7 @@ ENEMY_SPEED = 100    # Rychlost pohybu nepřátel
 BULLET_SPEED = 400   # Rychlost projektilů
 
 SHOOT_DISTANCE = 50  # Maximální vzdálenost pro střelbu v pixelech
+MAX_SHOOTS = 20      # Maximální počet střel na hru
 
 # Herní parametry
 BULLET_LIFETIME = .5   # Doba života projektilu v sekundách

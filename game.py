@@ -6,7 +6,7 @@ Spravuje herní smyčku, sprite skupiny, kolize a vykreslování.
 
 import pygame
 from datetime import datetime
-from settings import WIDTH, HEIGHT, FPS, DIFFICULTY_LEVELS, ENEMY_SIZE_BY_DIFFICULTY
+from settings import WIDTH, HEIGHT, FPS, DIFFICULTY_LEVELS, ENEMY_SIZE_BY_DIFFICULTY, MAX_SHOOTS
 from entities.player import Player
 from systems.spawner import Spawner
 from systems.leaderboard import save_result
@@ -71,6 +71,7 @@ class Game:
         self.shoots = 0
         self.game_start_time = None  # Zaznamenání času startu hry
         self.game_start_datetime = None  # ISO formát data/času startu hry
+        self.shots_left = MAX_SHOOTS
 
     # ------------------------------------------------------------------
     def run(self):
@@ -152,6 +153,9 @@ class Game:
             elif self.state == "game_over":
                 if event.type == pygame.KEYDOWN and event.key in (pygame.K_RETURN, pygame.K_ESCAPE):
                     self.reset_game()
+                    # Vymazat čas startu pro další hru
+                    self.game_start_time = None
+                    self.game_start_datetime = None
                     self.state = "menu"
 
     # ------------------------------------------------------------------
@@ -178,6 +182,22 @@ class Game:
                 bullet.kill()  # Zničení projektilu
                 self.score += len(hits)  # Přičtení bodů za každého zabitého nepřítele
                 self.play_sound("hit")
+
+        # Detekce kolizí nepřítel-nepřítel (bez self-kolize)
+        # Použijeme párové porovnání rectů a odstraníme kolidující jedince
+        enemies_list = list(self.enemies)
+        to_remove = set()
+        for i in range(len(enemies_list)):
+            a = enemies_list[i]
+            for j in range(i + 1, len(enemies_list)):
+                b = enemies_list[j]
+                if a.rect.colliderect(b.rect):
+                    to_remove.add(a)
+                    to_remove.add(b)
+        if to_remove:
+            for e in to_remove:
+                e.kill()
+            self.score += len(to_remove)
 
         # Detekce kolize nepřátel s hráčem (game over)
         if pygame.sprite.spritecollide(self.player, self.enemies, False):
@@ -225,6 +245,21 @@ class Game:
         # Vykreslení všech sprite objektů
         self.all_sprites.draw(self.screen)
 
+        # Zobrazení zbývající munice pod hráčem (barevně podle stavu)
+        if hasattr(self, "shots_left"):
+            font = pygame.font.SysFont(None, 20)
+            # Barvy: >5 = bílá, 3-5 = žlutá, <=2 = červená
+            if self.shots_left <= 2:
+                color = (255, 80, 80)
+            elif self.shots_left <= 5:
+                color = (255, 210, 80)
+            else:
+                color = (255, 255, 255)
+            ammo_text = font.render(str(self.shots_left), True, color)
+            px = self.player.rect.centerx
+            py = self.player.rect.bottom + 8
+            self.screen.blit(ammo_text, ammo_text.get_rect(center=(px, py)))
+
         # Vykreslení uživatelského rozhraní
         self.draw_hud()
 
@@ -242,6 +277,7 @@ class Game:
             time_value=elapsed,
             shoots=self.shoots,
             accuracy=int((self.score / self.shoots * 100) if self.shoots > 0 else 0),
+            shots_left=self.shots_left,
         )
     
     # ------------------------------------------------------------------
@@ -266,12 +302,16 @@ class Game:
         # Reset skóre a statistik
         self.score = 0
         self.shoots = 0
+        self.shots_left = MAX_SHOOTS
 
     # ------------------------------------------------------------------
     def start_new_game(self):
         """Přechod na zadávání jména a následně na hru."""
         self.player_name = ""
         self.waiting_for_name = True
+        # Resetovat čas startu, aby nová hra měřila od začátku
+        self.game_start_time = None
+        self.game_start_datetime = None
         self.state = "name_entry"
 
     # ------------------------------------------------------------------
@@ -321,6 +361,9 @@ class Game:
         if event.key == pygame.K_RETURN:
             if self.player_name.strip():
                 self.waiting_for_name = False
+                # Resetovat čas startu těsně před vstupem do hry
+                self.game_start_time = None
+                self.game_start_datetime = None
                 self.state = "game"
             return
 

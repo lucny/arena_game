@@ -1,26 +1,114 @@
 [
   {
     "name": "Jan",
+    "score": 1,
+    "shoots": 2,
+    "accuracy": 50,
+    "game_duration_ms": 8005,
+    "game_start_datetime": "2025-12-15T22:09:39.502764"
+  },
+  {
+    "name": "Milan",
+    "score": 2,
+    "shoots": 4,
+    "accuracy": 50,
+    "game_duration_ms": 11711,
+    "game_start_datetime": "2025-12-15T22:09:58.655186"
+  },
+  {
+    "name": "Jana",
+    "score": 2,
+    "shoots": 4,
+    "accuracy": 50,
+    "game_duration_ms": 10383,
+    "game_start_datetime": "2025-12-15T22:10:18.744134"
+  },
+  {
+    "name": "Karel",
+    "score": 0,
+    "shoots": 2,
+    "accuracy": 0,
+    "game_duration_ms": 4774,
+    "game_start_datetime": "2025-12-15T22:10:37.510834"
+  },
+  {
+    "name": "Jindra",
     "score": 3,
+    "shoots": 4,
+    "accuracy": 75,
+    "game_duration_ms": 15708,
+    "game_start_datetime": "2025-12-15T22:10:49.694041"
+  },
+  {
+    "name": "Lenka",
+    "score": 9,
+    "shoots": 16,
+    "accuracy": 56,
+    "game_duration_ms": 25500,
+    "game_start_datetime": "2025-12-15T22:11:18.954892"
+  },
+  {
+    "name": "Marie",
+    "score": 6,
+    "shoots": 12,
+    "accuracy": 50,
+    "game_duration_ms": 16670,
+    "game_start_datetime": "2025-12-15T22:12:15.590886"
+  },
+  {
+    "name": "Petr",
+    "score": 8,
+    "shoots": 16,
+    "accuracy": 50,
+    "game_duration_ms": 22263,
+    "game_start_datetime": "2025-12-15T22:12:42.254768"
+  },
+  {
+    "name": "Andrej",
+    "score": 5,
+    "shoots": 11,
+    "accuracy": 45,
+    "game_duration_ms": 15883,
+    "game_start_datetime": "2025-12-15T22:13:16.987707"
+  },
+  {
+    "name": "Miloš",
+    "score": 4,
     "shoots": 6,
-    "accuracy": 50,
-    "game_duration_ms": 11941,
-    "game_start_datetime": "2025-12-15T21:43:26.194318"
+    "accuracy": 66,
+    "game_duration_ms": 14210,
+    "game_start_datetime": "2025-12-15T22:13:42.284705"
   },
   {
-    "name": "Martin",
+    "name": "Ivana",
+    "score": 2,
+    "shoots": 4,
+    "accuracy": 50,
+    "game_duration_ms": 9233,
+    "game_start_datetime": "2025-12-15T22:14:06.196501"
+  },
+  {
+    "name": "Božena",
+    "score": 5,
+    "shoots": 14,
+    "accuracy": 35,
+    "game_duration_ms": 15678,
+    "game_start_datetime": "2025-12-15T22:14:22.201227"
+  },
+  {
+    "name": "Božetěch",
     "score": 11,
-    "shoots": 22,
-    "accuracy": 50,
-    "game_duration_ms": 55074,
-    "game_start_datetime": "2025-12-15T21:43:26.194318"
+    "shoots": 20,
+    "accuracy": 55,
+    "game_duration_ms": 26972,
+    "game_start_datetime": "2025-12-15T22:14:48.091114"
   },
   {
-    "name": "Ivan",
-    "score": 10,
-    "shoots": 23,
-    "accuracy": 43,
-    "game_duration_ms": 26103,
-    "game_start_datetime": "2025-12-15T21:47:21.241674"
+    "name": "Ondřej",
+    "score": 16,
+    "shoots": 20,
+    "accuracy": 80,
+    "game_duration_ms": 38480,
+    "game_start_datetime": "2025-12-15T22:15:35.472171"
   }
 ]

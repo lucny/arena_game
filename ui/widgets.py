@@ -133,15 +133,33 @@ def draw_menu(
 			screen.blit(hint_surf, hint_surf.get_rect(center=(width // 2, y)))
 
 
-def draw_hud(screen, *, score, time_value, shoots, accuracy):
-	"""Vykreslí HUD se skóre, časem, počtem výstřelů a úspěšností."""
+def draw_hud(screen, *, score, time_value, shoots, accuracy, shots_left=None):
+	"""Vykreslí HUD se skóre, časem (mm:ss), počtem výstřelů a úspěšností.
+
+	Ammo je barevně zvýrazněno: >5 bílá, 3–5 žlutá, ≤2 červená.
+	"""
 	font = pygame.font.SysFont(None, 36)
+	minutes = (time_value // 60) if isinstance(time_value, int) else 0
+	seconds = (time_value % 60) if isinstance(time_value, int) else 0
+	time_str = f"{minutes}:{seconds:02d}"
+
+	white = (255, 255, 255)
 	labels = [
-		(f"Score: {score}", (10, 10)),
-		(f"Time: {time_value}", (210, 10)),
-		(f"Shoots: {shoots}", (410, 10)),
-		(f"Accuracy: {accuracy}%", (610, 10)),
+		(f"Score: {score}", (10, 10), white),
+		(f"Time: {time_str}", (210, 10), white),
+		(f"Shoots: {shoots}", (410, 10), white),
+		(f"Accuracy: {accuracy}%", (610, 10), white),
 	]
-	for text, pos in labels:
-		surf = font.render(text, True, (255, 255, 255))
+
+	if shots_left is not None:
+		if shots_left <= 2:
+			ammo_color = (255, 80, 80)
+		elif shots_left <= 5:
+			ammo_color = (255, 210, 80)
+		else:
+			ammo_color = white
+		labels.append((f"Ammo: {shots_left}", (810, 10), ammo_color))
+
+	for text, pos, color in labels:
+		surf = font.render(text, True, color)
 		screen.blit(surf, pos)

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Jenda",
+    "score": 5,
+    "shoots": 7,
+    "accuracy": 71,
+    "game_duration_ms": 16058,
+    "game_start_datetime": "2025-12-15T22:17:44.064408"
+  },
+  {
+    "name": "Václav",
+    "score": 6,
+    "shoots": 6,
+    "accuracy": 100,
+    "game_duration_ms": 18333,
+    "game_start_datetime": "2025-12-15T22:18:12.560898"
+  },
+  {
+    "name": "Hugo",
+    "score": 7,
+    "shoots": 7,
+    "accuracy": 100,
+    "game_duration_ms": 23727,
+    "game_start_datetime": "2025-12-15T22:18:44.597523"
+  },
+  {
+    "name": "Libor",
+    "score": 0,
+    "shoots": 0,
+    "accuracy": 0,
+    "game_duration_ms": 6322,
+    "game_start_datetime": "2025-12-15T22:19:30.678364"
+  },
+  {
+    "name": "Elena",
+    "score": 1,
+    "shoots": 2,
+    "accuracy": 50,
+    "game_duration_ms": 7405,
+    "game_start_datetime": "2025-12-15T22:19:47.603531"
+  }
+]
