@@ -5,7 +5,7 @@ Zobrazuje high score a statistiky hry.
 """
 
 import pygame
-from settings import WIDTH, HEIGHT
+from ui.widgets import draw_panel
 
 class ScoreMenu:
     """
@@ -25,9 +25,6 @@ class ScoreMenu:
             game: Reference na Game objekt
         """
         self.game = game
-        self.font = pygame.font.SysFont(None, 48)
-        self.small_font = pygame.font.SysFont(None, 32)
-        
         # Placeholder pro high scores
         self.high_scores = [
             ("Hráč 1", 150),
@@ -55,23 +52,22 @@ class ScoreMenu:
         Args:
             screen: Pygame Surface pro vykreslování
         """
-        screen.fill((20, 20, 20))
-        
-        # Nadpis
-        title = self.font.render("NEJLEPŠÍ VÝSLEDKY", True, (255, 255, 255))
-        screen.blit(title, title.get_rect(center=(WIDTH // 2, 100)))
-        
-        # High scores
-        for i, (name, score) in enumerate(self.high_scores):
-            color = (255, 200, 50) if i == 0 else (200, 200, 200)
-            text = self.small_font.render(f"{i+1}. {name}: {score}", True, color)
-            screen.blit(text, text.get_rect(center=(WIDTH // 2, 200 + i * 50)))
-        
-        # Aktuální skóre
+        lines = [f"{i+1}. {name}: {score}" for i, (name, score) in enumerate(self.high_scores)]
+
         if self.game.score > 0:
-            current = self.small_font.render(f"Vaše poslední skóre: {self.game.score}", True, (100, 255, 100))
-            screen.blit(current, current.get_rect(center=(WIDTH // 2, HEIGHT - 100)))
-        
-        # Nápověda
-        hint = self.small_font.render("Stiskněte Enter nebo ESC pro návrat", True, (150, 150, 150))
-        screen.blit(hint, hint.get_rect(center=(WIDTH // 2, HEIGHT - 50)))
+            lines.append(f"Vaše poslední skóre: {self.game.score}")
+
+        draw_panel(
+            screen,
+            "NEJLEPŠÍ VÝSLEDKY",
+            lines,
+            hint="Stiskněte Enter nebo ESC pro návrat",
+            title_color=(255, 255, 255),
+            line_color=(200, 200, 200),
+            highlight_first=True,
+            bg_color=(20, 20, 20),
+            title_y=100,
+            start_y=200,
+            line_spacing=50,
+            hint_y_offset=50,
+        )

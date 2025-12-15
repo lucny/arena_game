@@ -11,6 +11,7 @@ from systems.spawner import Spawner
 from ui.menu import Menu
 from ui.settings_menu import SettingsMenu
 from ui.score_menu import ScoreMenu
+from ui.widgets import draw_hud, draw_input_panel, draw_panel
 
 class Game:
     """
@@ -36,8 +37,9 @@ class Game:
         self.clock = pygame.time.Clock()
         
         # Herní menu a nastavení
-        self.state = "menu"
+        self.state = "menu"  # Začínáme menu
         self.menu = Menu(self)
+        self.waiting_for_name = False  # Flag pro čekání na jméno před hrou
         self.settings_menu = SettingsMenu(self)
         self.score_menu = ScoreMenu(self)
 
@@ -46,6 +48,8 @@ class Game:
         self.difficulty_index = 0  # Výchozí: "Lama"
         self.sound_on = True
         self.sounds = self._load_sounds()
+        self.player_name = ""
+        self.last_result = None
 
         # Sprite skupiny pro správu kolizí a vykreslování
         self.all_sprites = pygame.sprite.Group()  # Všechny viditelné objekty
@@ -63,6 +67,7 @@ class Game:
         self.running = True
         self.score = 0
         self.shoots = 0
+        self.game_start_time = None  # Zaznamenání času startu hry
 
     # ------------------------------------------------------------------
     def run(self):
@@ -84,7 +89,16 @@ class Game:
                 self.menu.draw(self.screen)
                 pygame.display.flip()
 
+            elif self.state == "name_entry":
+                self.draw_name_entry()
+                pygame.display.flip()
+
             elif self.state == "game":
+                # Hra je spuštěna
+                if self.game_start_time is None:
+                    # Poprvé vstupujeme do běhu hry
+                    self.game_start_time = pygame.time.get_ticks()
+                    self.reset_game()
                 self.update(dt)
                 self.draw()
                 
@@ -94,6 +108,10 @@ class Game:
                 
             elif self.state == "scores":
                 self.score_menu.draw(self.screen)
+                pygame.display.flip()
+
+            elif self.state == "game_over":
+                self.draw_game_over()
                 pygame.display.flip()
 
     # ------------------------------------------------------------------
@@ -110,7 +128,10 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if self.state == "menu":
+            if self.waiting_for_name:
+                self._handle_name_event(event)
+
+            elif self.state == "menu":
                 self.menu.handle_event(event)
 
             elif self.state == "settings":
@@ -123,6 +144,11 @@ class Game:
                 # Střelba na kliknutí myši
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.player.shoot()
+
+            elif self.state == "game_over":
+                if event.type == pygame.KEYDOWN and event.key in (pygame.K_RETURN, pygame.K_ESCAPE):
+                    self.reset_game()
+                    self.state = "menu"
 
     # ------------------------------------------------------------------
     def update(self, dt):
@@ -151,8 +177,14 @@ class Game:
 
         # Detekce kolize nepřátel s hráčem (game over)
         if pygame.sprite.spritecollide(self.player, self.enemies, False):
-            self.state = "menu"
-            self.reset_game()
+            self.last_result = {
+                "name": self.player_name or "Anon",
+                "score": self.score,
+                "shoots": self.shoots,
+                "accuracy": int((self.score / self.shoots * 100) if self.shoots > 0 else 0),
+                "difficulty": self.difficulties[self.difficulty_index],
+            }
+            self.state = "game_over"
 
     # ------------------------------------------------------------------
     def draw(self):
@@ -179,20 +211,16 @@ class Game:
 
     # ------------------------------------------------------------------
     def draw_hud(self):
-        """
-        Vykresluje HUD (Head-Up Display) - informace na obrazovce.
-        
-        Zobrazuje aktuální skóre v levém horním rohu.
-        """
-        font = pygame.font.SysFont(None, 36)
-        score = font.render(f"Score: {self.score}", True, (255,255,255))
-        time = font.render(f"Time: {int(pygame.time.get_ticks() / 1000)}", True, (255,255,255))
-        shoots = font.render(f"Shoots: {self.shoots}", True, (255,255,255))
-        accuracy = font.render(f"Accuracy: {int((self.score / self.shoots * 100) if self.shoots > 0 else 0)}%", True, (255,255,255))
-        self.screen.blit(score, (10, 10))
-        self.screen.blit(time, (210, 10))
-        self.screen.blit(shoots, (410, 10))
-        self.screen.blit(accuracy, (610, 10))
+        elapsed = 0
+        if self.game_start_time is not None:
+            elapsed = int((pygame.time.get_ticks() - self.game_start_time) / 1000)
+        draw_hud(
+            self.screen,
+            score=self.score,
+            time_value=elapsed,
+            shoots=self.shoots,
+            accuracy=int((self.score / self.shoots * 100) if self.shoots > 0 else 0),
+        )
     
     # ------------------------------------------------------------------
     def reset_game(self):
@@ -216,6 +244,13 @@ class Game:
         # Reset skóre a statistik
         self.score = 0
         self.shoots = 0
+
+    # ------------------------------------------------------------------
+    def start_new_game(self):
+        """Přechod na zadávání jména a následně na hru."""
+        self.player_name = ""
+        self.waiting_for_name = True
+        self.state = "name_entry"
 
     # ------------------------------------------------------------------
     def get_enemy_size(self):
@@ -256,3 +291,47 @@ class Game:
             return pygame.mixer.Sound(path)
         except pygame.error:
             return None
+
+    def _handle_name_event(self, event):
+        if event.type != pygame.KEYDOWN:
+            return
+
+        if event.key == pygame.K_RETURN:
+            if self.player_name.strip():
+                self.waiting_for_name = False
+                self.state = "game"
+            return
+
+        if event.key == pygame.K_BACKSPACE:
+            self.player_name = self.player_name[:-1]
+            return
+
+        # Přidání znaku, pouze pokud je tisknutelný
+        if event.unicode.isprintable() and len(self.player_name) < 12:
+            self.player_name += event.unicode
+
+    # ------------------------------------------------------------------
+    def draw_name_entry(self):
+        draw_input_panel(
+            self.screen,
+            "Zadejte jméno hráče",
+            self.player_name or "_",
+            "Enter pro potvrzení, Backspace smaže",
+        )
+
+    # ------------------------------------------------------------------
+    def draw_game_over(self):
+        name = self.last_result.get("name") if self.last_result else ""  # type: ignore[attr-defined]
+        score = self.last_result.get("score", 0) if self.last_result else 0
+        shoots = self.last_result.get("shoots", 0) if self.last_result else 0
+        acc = self.last_result.get("accuracy", 0) if self.last_result else 0
+        difficulty = self.last_result.get("difficulty", "?") if self.last_result else "?"
+
+        lines = [
+            f"Hráč: {name}",
+            f"Skóre: {score}",
+            f"Výstřely: {shoots}",
+            f"Úspěšnost: {acc}%",
+            f"Obtížnost: {difficulty}",
+        ]
+        draw_panel(self.screen, "Konec hry", lines, "Enter nebo ESC pro návrat do menu")

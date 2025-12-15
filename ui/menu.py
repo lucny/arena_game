@@ -5,7 +5,7 @@ Poskytuje navigaci mezi různými částmi hry.
 """
 
 import pygame
-from settings import WIDTH, HEIGHT
+from ui.widgets import draw_menu
 
 class Menu:
     """
@@ -33,9 +33,6 @@ class Menu:
         ]
         self.selected = 0
 
-        self.font = pygame.font.SysFont(None, 48)
-        self.small_font = pygame.font.SysFont(None, 32)
-
     def handle_event(self, event):
         """
         Zpracovává vstupy v hlavním menu.
@@ -61,8 +58,7 @@ class Menu:
         option = self.options[self.selected]
 
         if option == "Nová hra":
-            self.game.reset_game()  # Reset hry před začátkem
-            self.game.state = "game"
+            self.game.start_new_game()
 
         elif option == "Nastavení":
             self.game.state = "settings"
@@ -80,18 +76,10 @@ class Menu:
         Args:
             screen: Pygame Surface pro vykreslování
         """
-        screen.fill((20, 20, 20))
-
-        # Nadpis
-        title = self.font.render("ARENA SURVIVAL", True, (255, 255, 255))
-        screen.blit(title, title.get_rect(center=(WIDTH // 2, 150)))
-
-        # Možnosti menu
-        for i, option in enumerate(self.options):
-            color = (255, 200, 50) if i == self.selected else (200, 200, 200)
-            text = self.small_font.render(option, True, color)
-            screen.blit(text, text.get_rect(center=(WIDTH // 2, 250 + i * 40)))
-        
-        # Nápověda
-        hint = self.small_font.render("Použijte šipky a Enter pro výběr", True, (150, 150, 150))
-        screen.blit(hint, hint.get_rect(center=(WIDTH // 2, HEIGHT - 50)))
+        draw_menu(
+            screen,
+            "ARENA SURVIVAL",
+            self.options,
+            self.selected,
+            hint="Použijte šipky a Enter pro výběr",
+        )
