@@ -47,6 +47,7 @@ class Game:
         # Herní stav
         self.running = True
         self.score = 0
+        self.shoots = 0
 
     # ------------------------------------------------------------------
     def run(self):
@@ -143,5 +144,11 @@ class Game:
         Zobrazuje aktuální skóre v levém horním rohu.
         """
         font = pygame.font.SysFont(None, 36)
-        text = font.render(f"Score: {self.score}", True, (255,255,255))
-        self.screen.blit(text, (10, 10))
+        score = font.render(f"Score: {self.score}", True, (255,255,255))
+        time = font.render(f"Time: {int(pygame.time.get_ticks() / 1000)}", True, (255,255,255))
+        shoots = font.render(f"Shoots: {self.shoots}", True, (255,255,255))
+        accuracy = font.render(f"Accuracy: {int((self.score / self.shoots * 100) if self.shoots > 0 else 0)}%", True, (255,255,255))
+        self.screen.blit(score, (10, 10))
+        self.screen.blit(time, (210, 10))
+        self.screen.blit(shoots, (410, 10))
+        self.screen.blit(accuracy, (610, 10))

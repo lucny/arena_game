@@ -7,7 +7,7 @@ Zpracovává pohyb pomocí klávesnice (WASD) a střelbu směrem k myši.
 import pygame
 from entities.entity import Entity
 from entities.bullet import Bullet
-from settings import PLAYER_SPEED, WIDTH, HEIGHT
+from settings import PLAYER_SPEED, WIDTH, HEIGHT, SHOOT_DISTANCE
 
 class Player(Entity):
     """
@@ -86,10 +86,13 @@ class Player(Entity):
         direction = mouse_pos - self.pos
 
         # Normalizace směru (jednotkový vektor)
-        if direction.length() > 0:
+        print(direction.length())
+        if 0 < direction.length() < SHOOT_DISTANCE:
             direction = direction.normalize()
 
-        # Vytvoření a přidání projektilu do hry
-        bullet = Bullet(self.game, self.pos, direction)
-        self.game.bullets.add(bullet)
-        self.game.all_sprites.add(bullet)
+            # Vytvoření a přidání projektilu do hry
+            bullet = Bullet(self.game, self.pos, direction)
+            self.game.shoots += 1
+            self.game.bullets.add(bullet)
+            self.game.all_sprites.add(bullet)
+            
