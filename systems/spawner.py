@@ -72,6 +72,6 @@ class Spawner:
             pos = (WIDTH, random.randint(0, HEIGHT))
 
         # Vytvoření nepřítele a přidání do sprite skupin
-        enemy = Enemy(self.game, pos)
+        enemy = Enemy(self.game, pos, size=self.game.get_enemy_size())
         self.game.enemies.add(enemy)
         self.game.all_sprites.add(enemy)

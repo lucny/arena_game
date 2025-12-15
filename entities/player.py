@@ -95,4 +95,5 @@ class Player(Entity):
             self.game.shoots += 1
             self.game.bullets.add(bullet)
             self.game.all_sprites.add(bullet)
+            self.game.play_sound("shoot")
             

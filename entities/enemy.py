@@ -16,16 +16,17 @@ class Enemy(Entity):
     Při kontaktu s hráčem způsobí game over.
     """
 
-    def __init__(self, game, pos):
+    def __init__(self, game, pos, size=(30, 30)):
         """
         Inicializuje nepřítele.
         
         Args:
             game: Reference na Game objekt
             pos: Tuple (x, y) - počáteční pozice (obvykle na okraji obrazovky)
+            size: Tuple (width, height) - velikost nepřítele (pro obtížnost)
         """
-        # Červený čtverec 30x30 pixelů
-        super().__init__(game, pos, (30, 30), (255, 60, 60))
+        # Červený čtverec - velikost dle obtížnosti
+        super().__init__(game, pos, size, (255, 60, 60))
 
     def update(self, dt):
         """

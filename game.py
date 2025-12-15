@@ -5,7 +5,7 @@ Spravuje herní smyčku, sprite skupiny, kolize a vykreslování.
 """
 
 import pygame
-from settings import WIDTH, HEIGHT, FPS
+from settings import WIDTH, HEIGHT, FPS, DIFFICULTY_LEVELS, ENEMY_SIZE_BY_DIFFICULTY
 from entities.player import Player
 from systems.spawner import Spawner
 from ui.menu import Menu
@@ -35,11 +35,17 @@ class Game:
         pygame.display.set_caption("Arena Survival – OOP Version")
         self.clock = pygame.time.Clock()
         
-        # Herní menu
+        # Herní menu a nastavení
         self.state = "menu"
         self.menu = Menu(self)
         self.settings_menu = SettingsMenu(self)
         self.score_menu = ScoreMenu(self)
+
+        # Herní nastavení
+        self.difficulties = DIFFICULTY_LEVELS
+        self.difficulty_index = 0  # Výchozí: "Lama"
+        self.sound_on = True
+        self.sounds = self._load_sounds()
 
         # Sprite skupiny pro správu kolizí a vykreslování
         self.all_sprites = pygame.sprite.Group()  # Všechny viditelné objekty
@@ -141,6 +147,7 @@ class Game:
             if hits:
                 bullet.kill()  # Zničení projektilu
                 self.score += len(hits)  # Přičtení bodů za každého zabitého nepřítele
+                self.play_sound("hit")
 
         # Detekce kolize nepřátel s hráčem (game over)
         if pygame.sprite.spritecollide(self.player, self.enemies, False):
@@ -209,3 +216,43 @@ class Game:
         # Reset skóre a statistik
         self.score = 0
         self.shoots = 0
+
+    # ------------------------------------------------------------------
+    def get_enemy_size(self):
+        """Vrátí velikost nepřítele podle aktuální obtížnosti."""
+        difficulty = self.difficulties[self.difficulty_index]
+        return ENEMY_SIZE_BY_DIFFICULTY.get(difficulty, (30, 30))
+
+    # ------------------------------------------------------------------
+    def set_difficulty(self, name):
+        """Nastaví obtížnost podle názvu, pokud existuje."""
+        if name in self.difficulties:
+            self.difficulty_index = self.difficulties.index(name)
+
+    # ------------------------------------------------------------------
+    def toggle_sound(self):
+        """Přepíná stav zvuku."""
+        self.sound_on = not self.sound_on
+
+    # ------------------------------------------------------------------
+    def play_sound(self, name):
+        if not self.sound_on:
+            return
+
+        sound = self.sounds.get(name)
+        if sound:
+            sound.play()
+
+    # ------------------------------------------------------------------
+    def _load_sounds(self):
+        return {
+            "shoot": self._safe_load_sound("assets/sounds/ding.wav"),
+            "hit": self._safe_load_sound("assets/sounds/chord.wav"),
+        }
+
+    # ------------------------------------------------------------------
+    def _safe_load_sound(self, path):
+        try:
+            return pygame.mixer.Sound(path)
+        except pygame.error:
+            return None

@@ -21,3 +21,11 @@ SHOOT_DISTANCE = 50  # Maximální vzdálenost pro střelbu v pixelech
 # Herní parametry
 BULLET_LIFETIME = .5   # Doba života projektilu v sekundách
 SPAWN_INTERVAL = 2.0    # Interval pro spawn nepřátel v sekundách
+
+# Obtížnost a velikosti nepřátel
+DIFFICULTY_LEVELS = ["Lama", "Machr", "Superman"]
+ENEMY_SIZE_BY_DIFFICULTY = {
+	"Lama": (40, 40),       # Největší nepřátelé - nejlehčí
+	"Machr": (30, 30),      # Výchozí velikost
+	"Superman": (22, 22),   # Nejmenší nepřátelé - nejtěžší
+}
