@@ -1,20 +1,21 @@
 """
 Menu výsledků pro Arena Survival.
 
-Zobrazuje high score a statistiky hry.
+Zobrazuje žebríčky nejlepších hráčů dle obtížnosti.
 """
 
 import pygame
 from ui.widgets import draw_panel
+from systems.leaderboard import get_leaderboard, DIFFICULTIES
+
 
 class ScoreMenu:
     """
-    Menu pro zobrazení výsledků a statistik.
+    Menu pro zobrazení výsledků a žebríčků.
     
     Attributes:
         game: Reference na Game objekt
-        font: Font pro nadpis
-        small_font: Font pro text
+        selected_difficulty: Index vybrané obtížnosti
     """
     
     def __init__(self, game):
@@ -25,14 +26,7 @@ class ScoreMenu:
             game: Reference na Game objekt
         """
         self.game = game
-        # Placeholder pro high scores
-        self.high_scores = [
-            ("Hráč 1", 150),
-            ("Hráč 2", 120),
-            ("Hráč 3", 100),
-            ("Hráč 4", 80),
-            ("Hráč 5", 50)
-        ]
+        self.selected_difficulty = 0  # Výchozí: Lama
     
     def handle_event(self, event):
         """
@@ -42,7 +36,11 @@ class ScoreMenu:
             event: Pygame event
         """
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE or event.key == pygame.K_RETURN:
+            if event.key == pygame.K_LEFT:
+                self.selected_difficulty = (self.selected_difficulty - 1) % len(DIFFICULTIES)
+            elif event.key == pygame.K_RIGHT:
+                self.selected_difficulty = (self.selected_difficulty + 1) % len(DIFFICULTIES)
+            elif event.key == pygame.K_ESCAPE or event.key == pygame.K_RETURN:
                 self.game.state = "menu"
     
     def draw(self, screen):
@@ -52,22 +50,41 @@ class ScoreMenu:
         Args:
             screen: Pygame Surface pro vykreslování
         """
-        lines = [f"{i+1}. {name}: {score}" for i, (name, score) in enumerate(self.high_scores)]
-
-        if self.game.score > 0:
-            lines.append(f"Vaše poslední skóre: {self.game.score}")
-
+        # Načti žebríček pro vybranou obtížnost
+        difficulty = DIFFICULTIES[self.selected_difficulty]
+        leaderboard = get_leaderboard(difficulty, limit=5)
+        
+        # Sestav řádky s výsledky
+        lines = []
+        if leaderboard:
+            for i, result in enumerate(leaderboard):
+                name = result.get("name", "?")
+                score = result.get("score", 0)
+                game_duration_ms = result.get("game_duration_ms", 0)
+                game_duration_s = game_duration_ms // 1000
+                minutes = game_duration_s // 60
+                seconds = game_duration_s % 60
+                accuracy = result.get("accuracy", 0)
+                lines.append(f"{i+1}. {name}: {minutes}:{seconds:02d} ({score} bodů, {accuracy}%)")
+        else:
+            lines.append("Zatím žádné výsledky")
+        
+        # Zobraz panel s nápovědá o výběru obtížnosti
+        hint = [
+            f"Obtížnost: {difficulty}",
+            "Šipky vlevo/vpravo pro zmenu obtížnosti",
+            "Enter nebo ESC pro návrat"
+        ]
+        
         draw_panel(
             screen,
             "NEJLEPŠÍ VÝSLEDKY",
             lines,
-            hint="Stiskněte Enter nebo ESC pro návrat",
+            hint=hint,
             title_color=(255, 255, 255),
             line_color=(200, 200, 200),
-            highlight_first=True,
-            bg_color=(20, 20, 20),
             title_y=100,
             start_y=200,
             line_spacing=50,
-            hint_y_offset=50,
+            hint_y_offset=80,
         )

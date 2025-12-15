@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Jan",
+    "score": 3,
+    "shoots": 6,
+    "accuracy": 50,
+    "game_duration_ms": 11941,
+    "game_start_datetime": "2025-12-15T21:43:26.194318"
+  },
+  {
+    "name": "Martin",
+    "score": 11,
+    "shoots": 22,
+    "accuracy": 50,
+    "game_duration_ms": 55074,
+    "game_start_datetime": "2025-12-15T21:43:26.194318"
+  },
+  {
+    "name": "Ivan",
+    "score": 10,
+    "shoots": 23,
+    "accuracy": 43,
+    "game_duration_ms": 26103,
+    "game_start_datetime": "2025-12-15T21:47:21.241674"
+  }
+]

@@ -5,9 +5,11 @@ Spravuje herní smyčku, sprite skupiny, kolize a vykreslování.
 """
 
 import pygame
+from datetime import datetime
 from settings import WIDTH, HEIGHT, FPS, DIFFICULTY_LEVELS, ENEMY_SIZE_BY_DIFFICULTY
 from entities.player import Player
 from systems.spawner import Spawner
+from systems.leaderboard import save_result
 from ui.menu import Menu
 from ui.settings_menu import SettingsMenu
 from ui.score_menu import ScoreMenu
@@ -68,6 +70,7 @@ class Game:
         self.score = 0
         self.shoots = 0
         self.game_start_time = None  # Zaznamenání času startu hry
+        self.game_start_datetime = None  # ISO formát data/času startu hry
 
     # ------------------------------------------------------------------
     def run(self):
@@ -98,6 +101,7 @@ class Game:
                 if self.game_start_time is None:
                     # Poprvé vstupujeme do běhu hry
                     self.game_start_time = pygame.time.get_ticks()
+                    self.game_start_datetime = datetime.now().isoformat()
                     self.reset_game()
                 self.update(dt)
                 self.draw()
@@ -177,12 +181,30 @@ class Game:
 
         # Detekce kolize nepřátel s hráčem (game over)
         if pygame.sprite.spritecollide(self.player, self.enemies, False):
+            accuracy = int((self.score / self.shoots * 100) if self.shoots > 0 else 0)
+            difficulty = self.difficulties[self.difficulty_index]
+            
+            # Vypočti dobu hraní v milisekundách
+            game_duration_ms = pygame.time.get_ticks() - self.game_start_time if self.game_start_time else 0
+            
+            # Ulož výsledek do žebříčku
+            save_result(
+                difficulty,
+                self.player_name or "Anon",
+                self.score,
+                self.shoots,
+                accuracy,
+                game_duration_ms,
+                self.game_start_datetime or datetime.now().isoformat(),
+            )
+            
             self.last_result = {
                 "name": self.player_name or "Anon",
                 "score": self.score,
                 "shoots": self.shoots,
-                "accuracy": int((self.score / self.shoots * 100) if self.shoots > 0 else 0),
-                "difficulty": self.difficulties[self.difficulty_index],
+                "accuracy": accuracy,
+                "difficulty": difficulty,
+                "game_duration_ms": game_duration_ms,
             }
             self.state = "game_over"
 
@@ -323,14 +345,17 @@ class Game:
     def draw_game_over(self):
         name = self.last_result.get("name") if self.last_result else ""  # type: ignore[attr-defined]
         score = self.last_result.get("score", 0) if self.last_result else 0
-        shoots = self.last_result.get("shoots", 0) if self.last_result else 0
         acc = self.last_result.get("accuracy", 0) if self.last_result else 0
         difficulty = self.last_result.get("difficulty", "?") if self.last_result else "?"
+        duration_ms = self.last_result.get("game_duration_ms", 0) if self.last_result else 0
+        duration_s = duration_ms // 1000
+        minutes = duration_s // 60
+        seconds = duration_s % 60
 
         lines = [
             f"Hráč: {name}",
+            f"Čas: {minutes}:{seconds:02d}",
             f"Skóre: {score}",
-            f"Výstřely: {shoots}",
             f"Úspěšnost: {acc}%",
             f"Obtížnost: {difficulty}",
         ]
